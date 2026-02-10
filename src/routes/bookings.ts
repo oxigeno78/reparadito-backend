@@ -1,6 +1,7 @@
 import { Router } from "express";
 import Booking from "../models/Booking";
 import { bookingSchema } from "../validators/booking.schema";
+import { Status } from "../interfaces/booking.interface";
 
 const router = Router();
 
@@ -9,8 +10,8 @@ router.post("/", async (req, res) => {
     const data = bookingSchema.parse(req.body);
 
     const exists = await Booking.findOne({
-      datetime: data.datetime,
-      status: { $ne: "CANCELLED" }
+      dateReserved: data.dateReserved,
+      status: { $ne: Status.CANCELLED }
     });
 
     if (exists) {
@@ -19,7 +20,7 @@ router.post("/", async (req, res) => {
 
     const booking = await Booking.create({
       ...data,
-      datetime: new Date(data.datetime)
+      status: Status.PENDING
     });
 
     // TODO: crear link de pago

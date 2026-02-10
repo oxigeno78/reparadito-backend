@@ -1,30 +1,44 @@
 import { Schema, model } from "mongoose";
+import { BookingSchemaInterface } from "../interfaces/booking.interface";
+import { Service, Status } from "../interfaces/booking.interface";
 
-const BookingSchema = new Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true },
-  phone: { type: String, required: true },
-
-  service: {
+const BookingSchema = new Schema<BookingSchemaInterface>({
+  name: {
     type: String,
-    enum: ["LAPTOP_PRO", "PC_PRO", "DIAG"],
+    required: true
+  },
+  email: {
+    type: String,
+    required: true
+  },
+  phone: {
+    type: String,
     required: true
   },
 
-  datetime: { type: Date, required: true },
+  service: {
+    type: String,
+    enum: Object.values(Service),
+    required: true
+  },
+
+  dateReserved: {
+    type: Date,
+    required: true
+  },
 
   status: {
     type: String,
-    enum: ["PENDING", "PAID", "CANCELLED", "DONE"],
-    default: "PENDING"
+    enum: Object.values(Status),
+    default: Status.PENDING
   },
 
-  paymentId: String,
-
-  createdAt: {
-    type: Date,
-    default: Date.now
+  paymentId: {
+    type: String,
+    required: false
   }
+}, {
+  timestamps: true
 });
 
 export default model("Booking", BookingSchema);

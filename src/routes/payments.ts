@@ -1,13 +1,16 @@
 import { Router } from 'express';
 import { Preference } from 'mercadopago';
 import mp from '../config/mp';
-
+import Booking from '../models/Booking';
+import { BookingSchemaInterface } from '../interfaces/booking.interface';
+import { Service, Status } from '../interfaces/booking.interface';
+import rateLimit from 'express-rate-limit';
 const router = Router();
 
 /**
  * Crear pago
  */
-router.post('/create', async (req, res) => {
+router.post('/create', rateLimit({ windowMs: 15 * 60 * 1000, max: 50 }), async (req, res) => {
     try {
 
         const { bookingId, price, customerEmail } = req.body;
@@ -16,9 +19,21 @@ router.post('/create', async (req, res) => {
             return res.status(400).json({ error: 'Datos incompletos' });
         }
 
+        const booking: BookingSchemaInterface | null = await Booking.findOne({ _id: bookingId });
+        if (!booking) {
+            return res.status(404).json({ error: 'Reserva no encontrada' });
+        }
+        if (booking.status !== Status.PENDING) {
+            return res.status(400).json({ error: 'Reserva ya tiene un proceso de pago activo' });
+        }
+
+        if (booking.price !== price) {
+            return res.status(400).json({ error: 'Precio no coincide' });
+        }
+
         const preference = new Preference(mp);
 
-        preference.create({
+        const preferenceResult = await preference.create({
             body: {
                 items: [
                     {
@@ -47,12 +62,19 @@ router.post('/create', async (req, res) => {
 
                 external_reference: bookingId
             }
-        }).then((result) => {
-            console.log('result', result);
-            res.json({
-                id: result.id,
-                init_point: result.init_point
-            });
+        });
+        console.log('result', preferenceResult);
+        const updateBooking: BookingSchemaInterface | null = await Booking.findOneAndUpdate({ _id: bookingId, status: Status.PENDING }, {
+            preferenceId: preferenceResult.id,
+            status: Status.PROCESSING,
+        },
+            { new: true });
+        if (!updateBooking) {
+            return res.status(404).json({ error: 'Reserva no encontrada' });
+        }
+        res.json({
+            id: preferenceResult.id,
+            init_point: preferenceResult.init_point
         });
 
     } catch (err) {

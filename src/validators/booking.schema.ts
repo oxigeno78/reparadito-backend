@@ -1,11 +1,14 @@
 import { z } from "zod";
+import { Service } from "../interfaces/booking.interface";
 
 export const bookingSchema = z.object({
   name: z.string().min(2),
   email: z.email(),
   phone: z.string().min(10),
 
-  service: z.enum(["LAPTOP_PRO", "PC_PRO", "DIAG"]),
+  service: z.enum(Object.values(Service)),
 
-  datetime: z.iso.datetime()
+  dateReserved: z.iso.datetime(),
+
+  price: z.number()
 });
