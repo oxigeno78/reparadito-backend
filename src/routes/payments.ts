@@ -3,7 +3,7 @@ import { Preference } from 'mercadopago';
 import mp from '../config/mp';
 import Booking from '../models/Booking';
 import { BookingSchemaInterface } from '../interfaces/booking.interface';
-import { Service, Status } from '../interfaces/booking.interface';
+import { Status } from '../interfaces/booking.interface';
 import rateLimit from 'express-rate-limit';
 const router = Router();
 

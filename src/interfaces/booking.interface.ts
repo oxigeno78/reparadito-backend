@@ -29,6 +29,7 @@ export enum Status {
     REJECTED = "REJECTED",
     EXPIRED = "EXPIRED",
     APPROVED = "APPROVED",
-    PROCESSING = "PROCESSING"
+    PROCESSING = "PROCESSING",
+    FAILED = "FAILED"
 }
 
