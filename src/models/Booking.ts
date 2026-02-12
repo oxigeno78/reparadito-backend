@@ -1,6 +1,5 @@
 import { Schema, model } from "mongoose";
-import { BookingSchemaInterface } from "../interfaces/booking.interface";
-import { Service, Status } from "../interfaces/booking.interface";
+import { BookingSchemaInterface, PaymentData, Service, Status } from "../interfaces/booking.interface";
 
 const BookingSchema = new Schema<BookingSchemaInterface>({
   name: {
@@ -33,9 +32,13 @@ const BookingSchema = new Schema<BookingSchemaInterface>({
     default: Status.PENDING
   },
 
-  paymentId: {
-    type: String,
-    required: false
+  payment: {
+    type: Object as () => PaymentData,
+    required: true
+  },
+  expiresAt: {
+    type: Date,
+    default: null
   }
 }, {
   timestamps: true

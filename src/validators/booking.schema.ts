@@ -2,7 +2,7 @@ import { z } from "zod";
 import { Service } from "../interfaces/booking.interface";
 
 export const bookingSchema = z.object({
-  name: z.string().min(2),
+  clientname: z.string().min(2),
   email: z.email(),
   phone: z.string().min(10),
 
@@ -10,5 +10,5 @@ export const bookingSchema = z.object({
 
   dateReserved: z.iso.datetime(),
 
-  price: z.number()
+  accept: z.boolean()
 });
