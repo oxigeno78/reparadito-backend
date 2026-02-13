@@ -9,42 +9,26 @@ import mp from "../config/mp";
 
 const router = Router();
 
-router.get("/", async (req, res) => {
+router.get("/", async (_req, res) => {
   try {
 
-    const bookings = await Booking.find({
-      status: { $ne: Status.CANCELLED }
-    }).select("dateReserved service status");
+    const bookings = await Booking.find({status: { $ne: Status.CANCELLED }}).select("dateReserved service status");
 
     // Mapa: fecha => bookings
     const grouped = new Map<string, any[]>();
-
     for (const booking of bookings) {
-
       const dateKey = formatDate(booking.dateReserved);
-
-      if (!grouped.has(dateKey)) {
-        grouped.set(dateKey, []);
-      }
-
+      if (!grouped.has(dateKey)) grouped.set(dateKey, []);
       grouped.get(dateKey)!.push(booking);
     }
 
     const response: Availability[] = [];
-
     for (const [date, dayBookings] of grouped) {
-
       const slots: Slot[] = DAILY_SLOTS.map(time => {
-
         const occupied = dayBookings.some(b => {
-
-          const hours = b.dateReserved
-            .toTimeString()
-            .slice(0, 5); // HH:mm
-
+          const hours = b.dateReserved.toTimeString().slice(0, 5); // HH:mm
           return hours === time;
         });
-
         return {
           time,
           available: !occupied,
@@ -53,16 +37,10 @@ router.get("/", async (req, res) => {
       });
 
       // Status general del día
-      const hasPending = dayBookings.some(
-        b => b.status === Status.PENDING
-      );
-
-      const hasApproved = dayBookings.some(
-        b => b.status === Status.APPROVED
-      );
+      const hasPending = dayBookings.some(b => b.status === Status.PENDING);
+      const hasApproved = dayBookings.some(b => b.status === Status.APPROVED);
 
       let status = Status.AVAILABLE;
-
       if (hasPending) status = Status.PENDING;
       if (hasApproved) status = Status.APPROVED;
 
@@ -75,18 +53,14 @@ router.get("/", async (req, res) => {
     }
 
     // Ordenar por fecha
-    response.sort((a, b) =>
-      a.date.localeCompare(b.date)
-    );
+    response.sort((a, b) => a.date.localeCompare(b.date));
 
-    console.log("response availability", response);
+    console.log("Response:\n", JSON.stringify(response, null, 2));
 
     res.json(response);
 
   } catch (err: any) {
-
     console.error(err);
-
     res.status(500).json({
       error: err.message,
       status: 500,

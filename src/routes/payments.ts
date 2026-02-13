@@ -12,24 +12,13 @@ const router = Router();
  */
 router.post('/create', rateLimit({ windowMs: 15 * 60 * 1000, max: 50 }), async (req, res) => {
     try {
-
         const { bookingId, price, customerEmail } = req.body;
-
-        if (!bookingId || !price) {
-            return res.status(400).json({ error: 'Datos incompletos' });
-        }
+        if (!bookingId || !price) return res.status(400).json({ error: 'Datos incompletos' });
 
         const booking: BookingSchemaInterface | null = await Booking.findOne({ _id: bookingId });
-        if (!booking) {
-            return res.status(404).json({ error: 'Reserva no encontrada' });
-        }
-        if (booking.status !== Status.PENDING) {
-            return res.status(400).json({ error: 'Reserva ya tiene un proceso de pago activo' });
-        }
-
-        if (booking.price !== price) {
-            return res.status(400).json({ error: 'Precio no coincide' });
-        }
+        if (!booking) return res.status(404).json({ error: 'Reserva no encontrada' });
+        if (booking.status !== Status.PENDING) return res.status(400).json({ error: 'Reserva ya tiene un proceso de pago activo' });
+        if (booking.price !== price) return res.status(400).json({ error: 'Precio no coincide' });
 
         const preference = new Preference(mp);
 
@@ -69,21 +58,15 @@ router.post('/create', rateLimit({ windowMs: 15 * 60 * 1000, max: 50 }), async (
             status: Status.PROCESSING,
         },
             { new: true });
-        if (!updateBooking) {
-            return res.status(404).json({ error: 'Reserva no encontrada' });
-        }
+        if (!updateBooking) return res.status(404).json({ error: 'Reserva no encontrada' });
         res.json({
             id: preferenceResult.id,
             init_point: preferenceResult.init_point
         });
 
     } catch (err) {
-
         console.error(err);
-
-        res.status(500).json({
-            error: 'Error creando pago'
-        });
+        res.status(500).json({ error: 'Error creando pago' });
     }
 });
 

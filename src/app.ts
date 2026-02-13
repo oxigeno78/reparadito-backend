@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import bookingsRoutes from "./routes/bookings";
-import paymentsRoutes from "./routes/payments_unUsed";
+import paymentsRoutes from "./routes/payments";
 import webhooksRoutes from "./routes/webhooks";
 import { bookingLimiter, paymentLimiter, webhookLimiter } from "./middlewares/rateLimiters";
 
