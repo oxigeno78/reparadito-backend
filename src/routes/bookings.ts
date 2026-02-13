@@ -12,7 +12,7 @@ import utc from "dayjs/plugin/utc";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
-dayjs.tz.setDefault("Etc/GMT-6");
+dayjs.tz.setDefault("Etc/GMT+6");
 
 const router = Router();
 
@@ -41,7 +41,7 @@ router.get("/", async (_req, res) => {
       const slots: Slot[] = DAILY_SLOTS.map((time, i) => {
         const slotHour = parseInt(time.split(":")[0], 10);
         const matched = dayBookings.filter(b => {
-          console.log('\nhour Reserved', dayjs(b.dateReserved).hour(), `(${b.service})`, 'hour Slot', slotHour)
+          console.log('\nhour Reserved', dayjs.tz(b.dateReserved).hour(), `(${b.service})`, 'hour Slot', slotHour)
           return dayjs(b.dateReserved).hour() === slotHour
         });
         const occupied = matched.length > 0;
