@@ -33,10 +33,13 @@ router.get("/", async (_req, res) => {
     const response: Availability[] = [];
     for (const [date, dayBookings] of grouped) {
       const slots: Slot[] = DAILY_SLOTS.map((time, i) => {
-        const slotHour = parseInt(time.split(':')[0], 10);
+        const slotHour = parseInt(time);
         const occupied = dayBookings.some(b => dayjs(b.dateReserved).hour() === slotHour);
-        const service = dayBookings.find(b => (b.dateReserved as Date).getHours() === slotHour)?.service;
-        console.log(i, date, slotHour, service)
+        const service = dayBookings.find(b => {
+          console.log('date', dayjs(b.dateReserved).format("YYYY-MM-DD"), 'hour', dayjs(b.dateReserved).hour(), 'slotHour', slotHour, dayjs(b.dateReserved).hour() === slotHour && b.service)
+          return dayjs(b.dateReserved).hour() === slotHour
+        })?.service;
+        //console.log(i, time, date, slotHour, occupied, service)
         return {
           time,
           available: !occupied,
