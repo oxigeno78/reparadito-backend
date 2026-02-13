@@ -44,16 +44,4 @@ const BookingSchema = new Schema<BookingSchemaInterface>({
   timestamps: true
 });
 
-BookingSchema.methods.toJSON = function() {
-  const obj = this.toObject();
-  delete obj.__v;
-  return obj;
-};
-
-BookingSchema.methods.toObject = function() {
-  const obj = this.toObject();
-  delete obj.__v;
-  return obj;
-};
-
 export default model("Booking", BookingSchema);
