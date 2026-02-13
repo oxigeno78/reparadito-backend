@@ -12,8 +12,15 @@ const router = Router();
 
 router.get("/", async (_req, res) => {
   try {
-
-    const bookings = await Booking.find({status: { $ne: Status.CANCELLED }}).select("dateReserved service status");
+    const filters: Record<string, any> = {
+      status: { $ne: Status.CANCELLED },
+      dateReserved: {
+        $gte: new Date(),
+        $lte: new Date(dayjs().add(4, "week").endOf("day").toDate())
+      }
+    };
+    const bookings = await Booking.find(filters).select("dateReserved service status");
+    console.log("Bookings:", JSON.stringify(bookings, null, 2));
 
     // Mapa: fecha => bookings
     const grouped = new Map<string, any[]>();
