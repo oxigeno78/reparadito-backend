@@ -6,6 +6,7 @@ import { formatDate } from "../utils/dateFormatter";
 import { DAILY_SLOTS } from "../config/slots";
 import { Preference } from "mercadopago";
 import mp from "../config/mp";
+import dayjs from "dayjs";
 
 const router = Router();
 
@@ -24,31 +25,29 @@ router.get("/", async (_req, res) => {
 
     const response: Availability[] = [];
     for (const [date, dayBookings] of grouped) {
-      const slots: Slot[] = DAILY_SLOTS.map(time => {
-        const occupied = dayBookings.some(b => {
-          const hours = b.dateReserved.toTimeString().slice(0, 5); // HH:mm
-          return hours === time;
-        });
+      const slots: Slot[] = DAILY_SLOTS.map((time, i) => {
+        const slotHour = parseInt(time.split(':')[0], 10);
+        const occupied = dayBookings.some(b => dayjs(b.dateReserved).hour() === slotHour);
+        const service = dayBookings.find(b => (b.dateReserved as Date).getHours() === slotHour)?.service;
+        console.log(i, date, slotHour, service)
         return {
           time,
           available: !occupied,
-          date
+          date,
+          service
         };
       });
 
       // Status general del día
-      const hasPending = dayBookings.some(b => b.status === Status.PENDING);
-      const hasApproved = dayBookings.some(b => b.status === Status.APPROVED);
+      const dayStatus = dayBookings.some(b => b.available );
 
       let status = Status.AVAILABLE;
-      if (hasPending) status = Status.PENDING;
-      if (hasApproved) status = Status.APPROVED;
+      if (dayStatus) status = Status.AVAILABLE;
 
       response.push({
         date,
         slots,
-        status,
-        service: dayBookings[0]?.service
+        status
       });
     }
 

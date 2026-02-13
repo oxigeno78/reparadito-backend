@@ -51,7 +51,7 @@ export enum PaymentStatus {
 export type Availability = {
   date: string;
   slots: Slot[];
-  status: Status;
+  status?: Status;
   service?: string;
 };
 
