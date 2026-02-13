@@ -7,6 +7,12 @@ import { DAILY_SLOTS } from "../config/slots";
 import { Preference } from "mercadopago";
 import mp from "../config/mp";
 import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault("America/Mexico_City");
 
 const router = Router();
 
