@@ -42,16 +42,10 @@ router.get("/", async (_req, res) => {
         const slotHour = parseInt(time.split(":")[0], 10);
         const matched = dayBookings.filter(b => {
           console.log('\nhour Reserved', dayjs.tz(b.dateReserved).hour(), `(${b.service})`, 'hour Slot', slotHour)
-          return dayjs(b.dateReserved).hour() === slotHour
+          return dayjs.tz(b.dateReserved).hour() === slotHour
         });
         const occupied = matched.length > 0;
         const service = matched.map(b => b.service);
-        /* const occupied = dayBookings.some(b => dayjs.tz(b.dateReserved).startOf("hour").isSame(slotHour, "hour"));
-        const service = dayBookings.find(b => {
-          console.log('date', dayjs(b.dateReserved).format("YYYY-MM-DD"), 'hour', dayjs(b.dateReserved).hour(), 'slotHour', time, slotHour, dayjs(b.dateReserved).hour() === slotHour && b.service)
-          return dayjs.tz(b.dateReserved).hour() === slotHour
-        })?.service; */
-        //console.log(i, time, date, slotHour, occupied, service)
         return {
           time,
           available: !occupied,
