@@ -41,8 +41,8 @@ router.get("/", async (_req, res) => {
       const slots: Slot[] = DAILY_SLOTS.map((time, i) => {
         const slotHour = parseInt(time.split(":")[0], 10);
         const matched = dayBookings.filter(b => {
-          console.log('\nhour', dayjs.tz(b.dateReserved).startOf("hour").hour(), '\ntime', slotHour)
-          return dayjs.tz(b.dateReserved).startOf("hour").hour() === slotHour
+          console.log('\nhour Reserved', dayjs(b.dateReserved).startOf("hour").hour(), '\nhour Slot', slotHour)
+          return dayjs(b.dateReserved).startOf("hour").hour() === slotHour
         });
         const occupied = matched.length > 0;
         const service = matched.map(b => b.service);
