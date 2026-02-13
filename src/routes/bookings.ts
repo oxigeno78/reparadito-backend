@@ -39,12 +39,18 @@ router.get("/", async (_req, res) => {
     const response: Availability[] = [];
     for (const [date, dayBookings] of grouped) {
       const slots: Slot[] = DAILY_SLOTS.map((time, i) => {
-        const slotHour = dayjs().hour(parseInt(time.split(":")[0])).get("hour");
-        const occupied = dayBookings.some(b => dayjs(b.dateReserved).hour() === slotHour);
+        const slotHour = parseInt(time.split(":")[0], 10);
+        const matched = dayBookings.filter(b => {
+          console.log('\nhour', dayjs.tz(b.dateReserved).startOf("hour").hour(), '\ntime', slotHour)
+          return dayjs.tz(b.dateReserved).startOf("hour").hour() === slotHour
+        });
+        const occupied = matched.length > 0;
+        const service = matched.map(b => b.service);
+        /* const occupied = dayBookings.some(b => dayjs.tz(b.dateReserved).startOf("hour").isSame(slotHour, "hour"));
         const service = dayBookings.find(b => {
           console.log('date', dayjs(b.dateReserved).format("YYYY-MM-DD"), 'hour', dayjs(b.dateReserved).hour(), 'slotHour', time, slotHour, dayjs(b.dateReserved).hour() === slotHour && b.service)
           return dayjs.tz(b.dateReserved).hour() === slotHour
-        })?.service;
+        })?.service; */
         //console.log(i, time, date, slotHour, occupied, service)
         return {
           time,
@@ -55,7 +61,7 @@ router.get("/", async (_req, res) => {
       });
 
       // Status general del día
-      const dayStatus = dayBookings.some(b => b.available );
+      const dayStatus = dayBookings.some(b => b.available);
 
       let status = Status.AVAILABLE;
       if (dayStatus) status = Status.AVAILABLE;
@@ -151,7 +157,7 @@ router.post("/", async (req, res) => {
     // 3️⃣ Guardar preferenceId
     await Booking.findByIdAndUpdate(
       booking._id,
-      { 
+      {
         payment: {
           ...booking.payment,
           preferenceId: preferenceResult.id
