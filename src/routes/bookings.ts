@@ -39,11 +39,11 @@ router.get("/", async (_req, res) => {
     const response: Availability[] = [];
     for (const [date, dayBookings] of grouped) {
       const slots: Slot[] = DAILY_SLOTS.map((time, i) => {
-        const slotHour = parseInt(time.split(":")[0]);
+        const slotHour = dayjs().hour(parseInt(time.split(":")[0])).get("hour");
         const occupied = dayBookings.some(b => dayjs(b.dateReserved).hour() === slotHour);
         const service = dayBookings.find(b => {
-          console.log('date', dayjs(b.dateReserved).format("YYYY-MM-DD"), 'hour', dayjs(b.dateReserved).hour(), 'slotHour', slotHour, dayjs(b.dateReserved).hour() === slotHour && b.service)
-          return dayjs(b.dateReserved).hour() === slotHour
+          console.log('date', dayjs(b.dateReserved).format("YYYY-MM-DD"), 'hour', dayjs(b.dateReserved).hour(), 'slotHour', time, slotHour, dayjs(b.dateReserved).hour() === slotHour && b.service)
+          return dayjs.tz(b.dateReserved).hour() === slotHour
         })?.service;
         //console.log(i, time, date, slotHour, occupied, service)
         return {
@@ -70,7 +70,7 @@ router.get("/", async (_req, res) => {
     // Ordenar por fecha
     response.sort((a, b) => a.date.localeCompare(b.date));
 
-    console.log("Response:\n", JSON.stringify(response, null, 2));
+    // console.log("Response:\n", JSON.stringify(response, null, 2));
 
     res.json(response);
 
