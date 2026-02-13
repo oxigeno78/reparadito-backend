@@ -1,16 +1,16 @@
-import { BookingModel } from '../models/Booking';
+import { BookingSchemaInterface } from '../interfaces/booking.interface';
 import { config } from '../config/env';
 
 export const paymentService = {
-  processPayment: async (booking: BookingModel): Promise<boolean> => {
-    console.log(`Processing payment for booking: ${booking.id}`);
-    console.log(`Amount to charge: ${this.calculateAmount(booking.service)}`);
+  processPayment: async (booking: BookingSchemaInterface): Promise<boolean> => {
+    console.log(`Processing payment for booking: ${booking._id}`);
+    console.log(`Amount to charge: ${paymentService.calculateAmount(booking.service)}`);
     
     return true;
   },
   
-  refundPayment: async (booking: BookingModel): Promise<boolean> => {
-    console.log(`Refunding payment for booking: ${booking.id}`);
+  refundPayment: async (booking: BookingSchemaInterface): Promise<boolean> => {
+    console.log(`Refunding payment for booking: ${booking._id}`);
     return true;
   },
   

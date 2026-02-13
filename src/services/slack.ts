@@ -1,17 +1,17 @@
-import { BookingModel } from '../models/Booking';
+import { BookingSchemaInterface } from '../interfaces/booking.interface';
 import { config } from '../config/env';
 
 export const slackService = {
-  notifyNewBooking: async (booking: BookingModel): Promise<void> => {
-    console.log(`Notifying Slack about new booking: ${booking.id}`);
-    console.log(`Customer: ${booking.customerName} - Service: ${booking.service}`);
+  notifyNewBooking: async (booking: BookingSchemaInterface): Promise<void> => {
+    console.log(`Notifying Slack about new booking: ${booking._id}`);
+    console.log(`Customer: ${booking.name} - Service: ${booking.service}`);
   },
   
-  notifyCancellation: async (booking: BookingModel): Promise<void> => {
-    console.log(`Notifying Slack about cancellation: ${booking.id}`);
+  notifyCancellation: async (booking: BookingSchemaInterface): Promise<void> => {
+    console.log(`Notifying Slack about cancellation: ${booking._id}`);
   },
   
-  notifyPaymentIssue: async (booking: BookingModel): Promise<void> => {
-    console.log(`Notifying Slack about payment issue: ${booking.id}`);
+  notifyPaymentIssue: async (booking: BookingSchemaInterface): Promise<void> => {
+    console.log(`Notifying Slack about payment issue: ${booking._id}`);
   },
 };

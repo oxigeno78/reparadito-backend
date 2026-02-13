@@ -1,17 +1,17 @@
-import { BookingModel } from '../models/Booking';
+import { BookingSchemaInterface } from '../interfaces/booking.interface';
 import { config } from '../config/env';
 
 export const mailerService = {
-  sendConfirmation: async (booking: BookingModel): Promise<void> => {
-    console.log(`Sending confirmation email to ${booking.customerEmail}`);
-    console.log(`Booking details: ${booking.service} on ${booking.date}`);
+  sendConfirmation: async (booking: BookingSchemaInterface): Promise<void> => {
+    console.log(`Sending confirmation email to ${booking.email}`);
+    console.log(`Booking details: ${booking.service} on ${booking.dateReserved}`);
   },
   
-  sendCancellation: async (booking: BookingModel): Promise<void> => {
-    console.log(`Sending cancellation email to ${booking.customerEmail}`);
+  sendCancellation: async (booking: BookingSchemaInterface): Promise<void> => {
+    console.log(`Sending cancellation email to ${booking.email}`);
   },
   
-  sendReminder: async (booking: BookingModel): Promise<void> => {
-    console.log(`Sending reminder email to ${booking.customerEmail}`);
+  sendReminder: async (booking: BookingSchemaInterface): Promise<void> => {
+    console.log(`Sending reminder email to ${booking.email}`);
   },
 };

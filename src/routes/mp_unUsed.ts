@@ -43,8 +43,8 @@ router.post('/mp', async (req: Request, res: Response) => {
     // Procesar estado
     if (status === 'approved') {
       booking.status = Status.PAID;
-      booking.paymentId = paymentId;
-      booking.paymentAt = new Date();
+      booking.payment.paymentId = paymentId;
+      booking.payment.paymentAt = new Date();
 
       await booking.save();
     } else if (status === 'rejected' || status === 'cancelled') {
