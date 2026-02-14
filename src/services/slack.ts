@@ -1,5 +1,4 @@
 import { BookingSchemaInterface } from '../interfaces/booking.interface';
-import { config } from '../config/env';
 
 export const slackService = {
   notifyNewBooking: async (booking: BookingSchemaInterface): Promise<void> => {

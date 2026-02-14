@@ -1,5 +1,4 @@
 import { BookingSchemaInterface } from '../interfaces/booking.interface';
-import { config } from '../config/env';
 
 export const paymentService = {
   processPayment: async (booking: BookingSchemaInterface): Promise<boolean> => {
