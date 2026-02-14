@@ -1,7 +1,7 @@
 import { Router } from "express";
 import Booking from "../models/Booking";
 import { bookingSchema } from "../validators/booking.schema";
-import { Status, Availability, Slot, PaymentStatus } from "../interfaces/booking.interface";
+import { Status, Availability, Slot, PaymentStatus, Service } from "../interfaces/booking.interface";
 import { formatDate } from "../utils/dateFormatter";
 import { DAILY_SLOTS } from "../config/slots";
 import { Preference } from "mercadopago";
@@ -105,7 +105,6 @@ router.post("/", async (req, res) => {
       service: data.service,
       dateReserved: data.dateReserved,
       status: Status.RESERVED,
-      //paymentStatus: PaymentStatus.PENDING,
       payment: {
         preferenceId: "",
         paymentId: "",
@@ -117,13 +116,13 @@ router.post("/", async (req, res) => {
 
     // 2️⃣ Crear preference
     const preference = new Preference(mp);
-
+    const serviceName = data.service == Service.DIAG ? 'Diagnóstico a Domicilio' : 'Mantenimiento Preventivo a Domicilio';
     const preferenceResult = await preference.create({
       body: {
         items: [
           {
             id: booking._id.toString(),
-            title: `Anticipo servicio ${data.service}`,
+            title: `${serviceName} ${data.service}`,
             quantity: 1,
             unit_price: 200, // anticipo
             currency_id: 'MXN'
