@@ -6,7 +6,7 @@ export interface BookingSchemaInterface extends Document {
     phone: string;
     service: Service;
     dateReserved: Date;
-    status: Status;
+    bookingStatus: BookingStatus;
     payment: PaymentData;
     price?: number;
     expiresAt?: Date;
@@ -27,11 +27,13 @@ export enum Service {
     DIAG = "DIAG"
 }
 
-export enum Status {
+export enum BookingStatus {
     PENDING = "PENDING",
     PAID = "PAID",
     CANCELLED = "CANCELLED",
+    CANCELLED_LATE = "CANCELLED_LATE",
     DONE = "DONE",
+    NO_SHOW = "NO_SHOW",
     REJECTED = "REJECTED",
     EXPIRED = "EXPIRED",
     APPROVED = "APPROVED",
@@ -40,19 +42,21 @@ export enum Status {
     AVAILABLE = "AVAILABLE",
     CONFIRMED = "CONFIRMED",
     RESERVED = "RESERVED",
+    REESCHEDULED = "REESCHEDULED",
     UNAVAILABLE = "UNAVAILABLE"
 }
 
 export enum PaymentStatus {
     PENDING = "PENDING",
+    APPROVED = "APPROVED",
     REJECTED = "REJECTED",
-    APPROVED = "APPROVED"
+    REFUNDED = "REFUNDED"
 }
 
 export type Availability = {
   date: string;
   slots: Slot[];
-  status?: Status;
+  status?: BookingStatus;
   service?: string;
 };
 
@@ -61,5 +65,5 @@ export type Slot = {
     available: boolean;
     date: string;
     service?: string;
-    status?: Status;
+    status?: BookingStatus;
 };

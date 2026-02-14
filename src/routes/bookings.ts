@@ -1,7 +1,7 @@
 import { Router } from "express";
 import Booking from "../models/Booking";
 import { bookingSchema } from "../validators/booking.schema";
-import { Status, Availability, Slot, PaymentStatus, Service } from "../interfaces/booking.interface";
+import { BookingStatus, Availability, Slot, PaymentStatus, Service } from "../interfaces/booking.interface";
 import { formatDate } from "../utils/dateFormatter";
 import { DAILY_SLOTS } from "../config/slots";
 import { Preference } from "mercadopago";
@@ -19,13 +19,13 @@ const router = Router();
 router.get("/", async (_req, res) => {
   try {
     const filters: Record<string, any> = {
-      status: { $in: [Status.RESERVED, Status.PROCESSING, Status.CONFIRMED] },
+      status: { $in: [BookingStatus.RESERVED, BookingStatus.PROCESSING, BookingStatus.CONFIRMED] },
       dateReserved: {
         $gte: new Date(),
         $lte: new Date(dayjs().add(4, "week").endOf("day").toDate())
       }
     };
-    const bookings = await Booking.find(filters).select("dateReserved service status");
+    const bookings = await Booking.find(filters).select("dateReserved service bookingStatus");
 
     // Mapa: fecha => bookings
     const grouped = new Map<string, any[]>();
@@ -42,7 +42,7 @@ router.get("/", async (_req, res) => {
         const matched = dayBookings.filter(b => dayjs.tz(b.dateReserved).hour() === slotHour);
         const occupied = matched.length > 0;
         const service = matched.map(b => b.service)[0];
-        const status = matched.map(b => b.status)[0];
+        const status = matched.map(b => b.bookingStatus)[0];
         return {
           time,
           available: !occupied,
@@ -53,7 +53,7 @@ router.get("/", async (_req, res) => {
       });
 
       // Status general del día
-      const status = slots.some(slot => slot.status !== Status.CONFIRMED) ? Status.AVAILABLE : Status.UNAVAILABLE;
+      const status = slots.some(slot => slot.status !== BookingStatus.CONFIRMED) ? BookingStatus.AVAILABLE : BookingStatus.UNAVAILABLE;
 
       response.push({
         date,
@@ -85,7 +85,7 @@ router.post("/", async (req, res) => {
 
     const exists = await Booking.findOne({
       dateReserved: data.dateReserved,
-      status: { $ne: Status.CANCELLED }
+      bookingStatus: { $in: [BookingStatus.CANCELLED, BookingStatus.CANCELLED_LATE, BookingStatus.NO_SHOW] }
     });
 
     if (exists) {
@@ -104,7 +104,7 @@ router.post("/", async (req, res) => {
       phone: data.phone,
       service: data.service,
       dateReserved: data.dateReserved,
-      status: Status.RESERVED,
+      bookingStatus: BookingStatus.PENDING,
       payment: {
         preferenceId: "",
         paymentId: "",
@@ -156,7 +156,7 @@ router.post("/", async (req, res) => {
 
     res.status(201).json({
       _id: booking._id,
-      status: booking.status,
+      status: booking.bookingStatus,
       message: "Reserva creada",
       init_point: preferenceResult.init_point,
       error: null

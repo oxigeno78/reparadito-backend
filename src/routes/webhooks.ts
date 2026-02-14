@@ -3,7 +3,7 @@ import crypto from "crypto";
 import { Payment } from "mercadopago";
 import mp from "../config/mp";
 import Booking from "../models/Booking";
-import { Status, PaymentStatus, PaymentData } from "../interfaces/booking.interface";
+import { BookingStatus, PaymentStatus } from "../interfaces/booking.interface";
 const router = express.Router();
 const paymentClient = new Payment(mp);
 
@@ -65,7 +65,7 @@ router.post("/mp", async (req, res) => {
                 status: PaymentStatus.APPROVED,
                 paymentAt: new Date()
             },
-            status: Status.CONFIRMED
+            bookingStatus: BookingStatus.CONFIRMED
         });
         console.log("Pago confirmado:", bookingId);
         res.sendStatus(200);
