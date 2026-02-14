@@ -19,7 +19,7 @@ const router = Router();
 router.get("/", async (_req, res) => {
   try {
     const filters: Record<string, any> = {
-      status: { $ne: Status.CANCELLED },
+      status: { $in: [Status.RESERVED, Status.PROCESSING, Status.CONFIRMED] },
       dateReserved: {
         $gte: new Date(),
         $lte: new Date(dayjs().add(4, "week").endOf("day").toDate())
@@ -40,25 +40,21 @@ router.get("/", async (_req, res) => {
     for (const [date, dayBookings] of grouped) {
       const slots: Slot[] = DAILY_SLOTS.map((time, i) => {
         const slotHour = parseInt(time.split(":")[0], 10);
-        const matched = dayBookings.filter(b => {
-          console.log('\nhour Reserved', dayjs.tz(b.dateReserved).hour(), `(${b.service})`, 'hour Slot', slotHour)
-          return dayjs.tz(b.dateReserved).hour() === slotHour
-        });
+        const matched = dayBookings.filter(b => dayjs.tz(b.dateReserved).hour() === slotHour);
         const occupied = matched.length > 0;
-        const service = matched.map(b => b.service);
+        const service = matched.map(b => b.service)[0];
+        const status = matched.map(b => b.status)[0];
         return {
           time,
           available: !occupied,
           date,
-          service
+          service,
+          status
         };
       });
 
       // Status general del día
-      const dayStatus = dayBookings.some(b => b.available);
-
-      let status = Status.AVAILABLE;
-      if (dayStatus) status = Status.AVAILABLE;
+      const status = slots.some(slot => slot.status !== Status.CONFIRMED) ? Status.AVAILABLE : Status.UNAVAILABLE;
 
       response.push({
         date,

@@ -39,7 +39,8 @@ export enum Status {
     FAILED = "FAILED",
     AVAILABLE = "AVAILABLE",
     CONFIRMED = "CONFIRMED",
-    RESERVED = "RESERVED"
+    RESERVED = "RESERVED",
+    UNAVAILABLE = "UNAVAILABLE"
 }
 
 export enum PaymentStatus {
@@ -59,4 +60,6 @@ export type Slot = {
     time: string;
     available: boolean;
     date: string;
+    service?: string;
+    status?: Status;
 };
