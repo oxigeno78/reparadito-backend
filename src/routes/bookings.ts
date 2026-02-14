@@ -26,7 +26,6 @@ router.get("/", async (_req, res) => {
       }
     };
     const bookings = await Booking.find(filters).select("dateReserved service status");
-    console.log("Bookings:", JSON.stringify(bookings, null, 2));
 
     // Mapa: fecha => bookings
     const grouped = new Map<string, any[]>();
