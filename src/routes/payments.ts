@@ -3,7 +3,7 @@ import { Preference } from 'mercadopago';
 import mp from '../config/mp';
 import Booking from '../models/Booking';
 import { BookingSchemaInterface } from '../interfaces/booking.interface';
-import { Status } from '../interfaces/booking.interface';
+import { BookingStatus } from '../interfaces/booking.interface';
 import rateLimit from 'express-rate-limit';
 const router = Router();
 
@@ -17,7 +17,7 @@ router.post('/create', rateLimit({ windowMs: 15 * 60 * 1000, max: 50 }), async (
 
         const booking: BookingSchemaInterface | null = await Booking.findOne({ _id: bookingId });
         if (!booking) return res.status(404).json({ error: 'Reserva no encontrada' });
-        if (booking.status !== Status.PENDING) return res.status(400).json({ error: 'Reserva ya tiene un proceso de pago activo' });
+        if (booking.bookingStatus !== BookingStatus.PENDING) return res.status(400).json({ error: 'Reserva ya tiene un proceso de pago activo' });
         if (booking.price !== price) return res.status(400).json({ error: 'Precio no coincide' });
 
         const preference = new Preference(mp);
@@ -53,9 +53,9 @@ router.post('/create', rateLimit({ windowMs: 15 * 60 * 1000, max: 50 }), async (
             }
         });
         console.log('result', preferenceResult);
-        const updateBooking: BookingSchemaInterface | null = await Booking.findOneAndUpdate({ _id: bookingId, status: Status.PENDING }, {
+        const updateBooking: BookingSchemaInterface | null = await Booking.findOneAndUpdate({ _id: bookingId, bookingStatus: BookingStatus.PENDING }, {
             preferenceId: preferenceResult.id,
-            status: Status.PROCESSING,
+            bookingStatus: BookingStatus.PROCESSING,
         },
             { new: true });
         if (!updateBooking) return res.status(404).json({ error: 'Reserva no encontrada' });
