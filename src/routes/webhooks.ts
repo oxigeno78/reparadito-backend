@@ -87,10 +87,7 @@ router.post("/mp", async (req, res) => {
         });
 
         // Enviando Notificación por Slack al equipo...
-        await notifySlack(`📌 Nueva cita confirmada:
-            Cliente: ${existing.name}
-            Email: ${existing.email}
-            Fecha: ${dayjs(existing.dateReserved).format("DD/MM/YYYY HH:mm")}`);
+        await notifySlack(`📌 Nueva cita confirmada: \n\t\tCliente: ${existing.name}\n\t\tEmail: ${existing.email}\n\t\tFecha: ${dayjs(existing.dateReserved).format("DD/MM/YYYY HH:mm")} \n\t\tServicio: ${existing.service}\n📢`);
 
 
         res.sendStatus(200);
