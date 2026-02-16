@@ -9,6 +9,9 @@ import mp from "../config/mp";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
+import { mailService } from "../services/mail";
+import { notifySlack } from "../services/slack.service";
+import { renderEmailTemplate } from "../utils/renderEmailTemplates";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -103,6 +106,7 @@ router.post("/", async (req, res) => {
       email: data.email,
       phone: data.phone,
       service: data.service,
+      description: data.description,
       dateReserved: data.dateReserved,
       bookingStatus: BookingStatus.PENDING,
       payment: {
@@ -116,13 +120,13 @@ router.post("/", async (req, res) => {
 
     // 2️⃣ Crear preference
     const preference = new Preference(mp);
-    const serviceName = data.service == Service.DIAG ? 'Diagnóstico a Domicilio' : 'Mantenimiento Preventivo a Domicilio';
+    const serviceName = data.service == Service.DIAG ? 'Diagnóstico a Domicilio' : 'Servicios Informáticos a Domicilio';
     const preferenceResult = await preference.create({
       body: {
         items: [
           {
             id: booking._id.toString(),
-            title: `${serviceName} ${data.service}`,
+            title: `${serviceName} (${data.service})`,
             quantity: 1,
             unit_price: 200, // anticipo
             currency_id: 'MXN'
@@ -153,6 +157,22 @@ router.post("/", async (req, res) => {
       }
     );
 
+    const html = renderEmailTemplate("booking-confirmation.html", {
+      name: booking.name,
+      date: dayjs(booking.dateReserved).format("DD/MM/YYYY HH:mm"),
+      service: booking.service
+    });
+
+    await mailService.send({
+      to: booking.email,
+      subject: "Confirmación de tu cita",
+      html: html
+    });
+
+    await notifySlack(`📌 Nueva cita confirmada:
+      Cliente: ${booking.name}
+      Email: ${booking.email}
+      Fecha: ${dayjs(booking.dateReserved).format("DD/MM/YYYY HH:mm")}`);
 
     res.status(201).json({
       _id: booking._id,
@@ -163,6 +183,8 @@ router.post("/", async (req, res) => {
     });
 
   } catch (err: any) {
+    console.log(req.body);
+    console.error(err);
     return res.status(400).json({
       error: err.message,
       status: 400,

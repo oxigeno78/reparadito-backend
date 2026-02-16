@@ -1,9 +1,14 @@
 import express from "express";
 import crypto from "crypto";
+import path from "path";
 import { Payment } from "mercadopago";
 import mp from "../config/mp";
 import Booking from "../models/Booking";
 import { BookingStatus, PaymentStatus } from "../interfaces/booking.interface";
+import { mailService } from "../services/mail";
+import { renderEmailTemplate } from "../utils/renderEmailTemplates";
+import { notifySlack } from "../services/slack.service";
+import dayjs from "dayjs";
 const router = express.Router();
 const paymentClient = new Payment(mp);
 
@@ -68,6 +73,26 @@ router.post("/mp", async (req, res) => {
             bookingStatus: BookingStatus.CONFIRMED
         });
         console.log("Pago confirmado:", bookingId);
+
+        // Enviando Notificación por Email al cliente...
+        const html = renderEmailTemplate("booking-confirmation.html", {
+            name: existing.name,
+            date: dayjs(existing.dateReserved).format("DD/MM/YYYY HH:mm"),
+            service: existing.service
+        });
+        await mailService.send({
+            to: existing.email,
+            subject: "Confirmación de tu cita",
+            html: html
+        });
+
+        // Enviando Notificación por Slack al equipo...
+        await notifySlack(`📌 Nueva cita confirmada:
+            Cliente: ${existing.name}
+            Email: ${existing.email}
+            Fecha: ${dayjs(existing.dateReserved).format("DD/MM/YYYY HH:mm")}`);
+
+
         res.sendStatus(200);
     } catch (err) {
         console.error("Webhook error:", err);

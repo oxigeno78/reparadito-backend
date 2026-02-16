@@ -7,7 +7,7 @@ import { bookingLimiter, paymentLimiter, webhookLimiter } from "./middlewares/ra
 
 const app = express();
 app.set("trust proxy", 1);
-const allowedOrigins = ["http://localhost:3000", "http://localhost:3001", "https://reparadito.nizerapp.net"];
+const allowedOrigins = ["http://localhost:5173", "http://localhost:3001", "https://reparadito.nizerapp.net"];
 const allowedMethods = ["GET", "POST", "PUT", "DELETE", "OPTIONS"];
 const allowedHeaders = ["Content-Type", "Authorization"];
 

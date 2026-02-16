@@ -5,6 +5,7 @@ export interface BookingSchemaInterface extends Document {
     email: string;
     phone: string;
     service: Service;
+    description: string;
     dateReserved: Date;
     bookingStatus: BookingStatus;
     payment: PaymentData;
@@ -24,7 +25,13 @@ export interface PaymentData {
 export enum Service {
     LAPTOP_PRO = "LAPTOP_PRO",
     PC_PRO = "PC_PRO",
-    DIAG = "DIAG"
+    DIAG = "DIAG",
+    SCREEN = "SCREEN",
+    HARDWARE = "HARDWARE",
+    DATA = "DATA",
+    VIRUS = "VIRUS",
+    OPTIMIZATION = "OPTIMIZATION",
+    OTHER = "OTHER"
 }
 
 export enum BookingStatus {
