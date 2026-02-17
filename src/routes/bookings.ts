@@ -157,10 +157,11 @@ router.post("/", async (req, res) => {
       }
     );
 
-    const html = renderEmailTemplate("booking-confirmation.html", {
+    const html = renderEmailTemplate("complatePaymentClient.html", {
       name: booking.name,
       date: dayjs(booking.dateReserved).format("DD/MM/YYYY HH:mm"),
-      service: booking.service
+      service: booking.service,
+      payment_url: preferenceResult.init_point || ''
     });
 
     await mailService.send({
@@ -169,10 +170,7 @@ router.post("/", async (req, res) => {
       html: html
     });
 
-    await notifySlack(`📌 Nueva cita confirmada:
-      Cliente: ${booking.name}
-      Email: ${booking.email}
-      Fecha: ${dayjs(booking.dateReserved).format("DD/MM/YYYY HH:mm")}`);
+    await notifySlack(`📌 Nueva cita Creada: \n\t\tCliente: ${booking.name}\n\t\tEmail: ${booking.email}\n\t\tFecha: ${dayjs(booking.dateReserved).format("DD/MM/YYYY HH:mm")} \n\t\tServicio: ${booking.service}\n📢`);
 
     res.status(201).json({
       _id: booking._id,
