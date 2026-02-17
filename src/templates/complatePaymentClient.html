@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Completa tu reserva - Reparadito</title>
+</head>
+
+<body style="margin:0;padding:32px;background:#f5f7fb;font-family:'Segoe UI','Roboto',Arial,sans-serif;color:#0f172a;">
+
+<table width="100%" cellpadding="0" cellspacing="0"
+  style="max-width:620px;margin:0 auto;background:#ffffff;border-radius:18px;box-shadow:0 18px 45px rgba(6,56,128,0.12);overflow:hidden;">
+
+  <!-- ================= HEADER ================= -->
+  <tr>
+    <td style="padding:28px 32px;background:linear-gradient(130deg,#0f6fe8,#0c4fb3);color:#ffffff;text-align:center;">
+
+      <img
+        src="https://reparadito.nizerapp.net/penguin-tech.png"
+        width="130"
+        alt="Reparadito"
+        style="display:block;margin:0 auto 16px;"
+      />
+
+      <p style="margin:0;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;font-weight:700;">
+        Reserva en proceso
+      </p>
+
+      <h1 style="margin:6px 0 0;font-size:26px;font-weight:800;line-height:1.25;">
+        Estás a un paso de confirmar tu cita
+      </h1>
+
+    </td>
+  </tr>
+
+  <!-- ================= BODY ================= -->
+  <tr>
+    <td style="padding:32px;">
+
+      <!-- Greeting -->
+      <p style="margin:0 0 16px;font-size:16px;line-height:1.6;">
+        Hola <strong>{{name}}</strong>,
+      </p>
+
+      <!-- Intro -->
+      <p style="margin:0 0 18px;font-size:16px;line-height:1.6;">
+        Hemos reservado temporalmente tu espacio en nuestra agenda para el servicio solicitado.
+      </p>
+
+      <!-- Important notice -->
+      <p style="margin:0 0 18px;font-size:15px;line-height:1.6;color:#334155;">
+        <strong>Importante:</strong> Este correo se envía automáticamente al generar tu enlace de pago.
+        Si ya realizaste el pago hace unos momentos, puedes ignorar este mensaje.
+        En breve recibirás tu confirmación oficial.
+      </p>
+
+      <!-- Continue -->
+      <p style="margin:0 0 18px;font-size:16px;line-height:1.6;">
+        En caso de que aún no hayas completado el proceso, puedes hacerlo aquí:
+      </p>
+
+      <!-- ================= INFO BOX ================= -->
+      <table width="100%" cellpadding="0" cellspacing="0"
+        style="border-collapse:collapse;background:#f8fbff;border-radius:14px;margin:20px 0;overflow:hidden;">
+
+        <tr>
+          <td style="padding:14px 18px;font-size:15px;font-weight:600;color:#0f172a;">
+            Servicio
+          </td>
+          <td style="padding:14px 18px;font-size:15px;color:#0f172a;">
+            {{service}}
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:14px 18px;font-size:15px;font-weight:600;color:#0f172a;">
+            Fecha y hora
+          </td>
+          <td style="padding:14px 18px;font-size:15px;color:#0f172a;">
+            {{date}}
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:14px 18px;font-size:15px;font-weight:600;color:#0f172a;">
+            Anticipo
+          </td>
+          <td style="padding:14px 18px;font-size:15px;color:#0f172a;">
+            $200 MXN
+          </td>
+        </tr>
+
+      </table>
+
+      <!-- ================= CTA ================= -->
+      <div style="text-align:center;margin:28px 0;">
+
+        <a
+          href="{{payment_url}}"
+          style="
+            display:inline-block;
+            padding:14px 32px;
+            background:#0f6fe8;
+            color:#ffffff;
+            font-weight:700;
+            border-radius:999px;
+            text-decoration:none;
+            box-shadow:0 12px 28px rgba(15,111,232,0.35);
+          "
+        >
+          Completar pago y confirmar cita
+        </a>
+
+      </div>
+
+      <!-- Expiration (optional) -->
+      <p style="margin:0 0 18px;font-size:13px;line-height:1.5;color:#64748b;text-align:center;">
+        Este enlace es válido hasta: {{expires_at}}
+      </p>
+
+      <!-- Support -->
+      <p style="margin:0;font-size:14px;line-height:1.6;color:#334155;">
+        Si tienes alguna duda, contáctanos en
+        <a
+          href="mailto:soporte-reparadito@nizerapp.net"
+          style="color:#0f6fe8;text-decoration:none;font-weight:600;"
+        >
+          soporte-reparadito@nizerapp.net
+        </a>
+        o por WhatsApp.
+      </p>
+
+    </td>
+  </tr>
+
+  <!-- ================= FOOTER ================= -->
+  <tr>
+    <td style="padding:22px 32px;background:#0f6fe8;color:#ffffff;">
+
+      <p style="margin:0 0 4px;font-size:14px;font-weight:600;">
+        Reparadito
+      </p>
+
+      <p style="margin:0;font-size:13px;line-height:1.6;color:rgba(255,255,255,0.9);">
+        Soluciones honestas y a tiempo para tu equipo.
+        Horario: lunes a viernes de 10 a 17 hrs.
+      </p>
+
+    </td>
+  </tr>
+
+</table>
+
+<!-- ================= DISCLAIMER ================= -->
+<p style="margin:18px auto 0;text-align:center;font-size:12px;color:#64748b;max-width:520px;">
+  Si no solicitaste esta reserva, puedes ignorar este mensaje.
+</p>
+
+</body>
+</html>

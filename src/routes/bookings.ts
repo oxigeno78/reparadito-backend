@@ -119,6 +119,7 @@ router.post("/", async (req, res) => {
     });
 
     // 2️⃣ Crear preference
+    const pymentExpirationDate = new Date(Date.now() + 30 * 60 * 1000); //30 minutos
     const preference = new Preference(mp);
     const serviceName = data.service == Service.DIAG ? 'Diagnóstico a Domicilio' : 'Servicios Informáticos a Domicilio';
     const preferenceResult = await preference.create({
@@ -142,7 +143,8 @@ router.post("/", async (req, res) => {
         },
         auto_return: 'approved',
         notification_url: 'https://reparaditoapi.nizerapp.net/api/webhooks/mp',
-        external_reference: booking._id.toString()
+        external_reference: booking._id.toString(),
+        date_of_expiration: pymentExpirationDate.toISOString()
       }
     });
 
@@ -161,7 +163,8 @@ router.post("/", async (req, res) => {
       name: booking.name,
       date: dayjs(booking.dateReserved).format("DD/MM/YYYY HH:mm"),
       service: booking.service,
-      payment_url: preferenceResult.init_point || ''
+      payment_url: preferenceResult.init_point || '',
+      expiration_date: dayjs(pymentExpirationDate).format("DD/MM/YYYY HH:mm")
     });
 
     await mailService.send({
