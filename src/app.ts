@@ -7,17 +7,28 @@ import { bookingLimiter, paymentLimiter, webhookLimiter } from "./middlewares/ra
 
 const app = express();
 app.set("trust proxy", 1);
-const allowedOrigins = ["http://localhost:5173", "http://localhost:3000", "https://*.nizerapp.net"];
+const localhostOrigins = ["http://localhost:5173", "http://localhost:3000", "http://localhost:3001"];
+
+function isAllowedOrigin(origin: string): boolean {
+  if (localhostOrigins.includes(origin)) return true;
+
+  try {
+    const { protocol, hostname } = new URL(origin);
+    return protocol === "https:" && (hostname === "nizerapp.net" || hostname.endsWith(".nizerapp.net"));
+  } catch {
+    return false;
+  }
+}
+
 const allowedMethods = ["GET", "POST", "PUT", "DELETE", "OPTIONS"];
 const allowedHeaders = ["Content-Type", "Authorization"];
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
+    if (!origin || isAllowedOrigin(origin)) {
       callback(null, true);
     } else {
-      callback(null, false);
+      callback(new Error(`CORS: origen no permitido: ${origin}`));
     }
   },
   methods: allowedMethods,
